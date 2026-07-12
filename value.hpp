@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <functional>
 #include <memory>
 #include <vector>
 
@@ -20,21 +21,38 @@ typedef double f64;
 using Scalar = f64;
 
 struct Value {
-  Scalar data;
+  Scalar data, grad = 0;
   std::vector<std::shared_ptr<Value>> children;
+  std::function<void()> _backward = []() {};
 
   Value(Scalar num) { data = num; }
 
   Value(Scalar num, std::vector<std::shared_ptr<Value>> child)
       : data(num), children(child) {}
-
-  Value operator+(const Value &other) { return Value(data + other.data); }
-
-  Value operator*(const Value &other) { return Value(data * other.data); }
 };
+
+std::shared_ptr<Value> add(std::shared_ptr<Value> a, std::shared_ptr<Value> b) {
+  auto out = std::make_shared<Value>(a->data + b->data,
+                                     std::vector<std::shared_ptr<Value>>{a, b});
+
+  Value *out_raw = out.get();
+  out->_backward = [a, b, out_raw]() {
+    a->grad += 1 * out_raw->grad;
+    b->grad += 1 * out_raw->grad;
+  };
+
+  return out;
+}
 
 std::shared_ptr<Value> mul(std::shared_ptr<Value> a, std::shared_ptr<Value> b) {
 
-  return std::make_shared<Value>(a->data * b->data,
-                                 std::vector<std::shared_ptr<Value>>{a, b});
+  auto out = std::make_shared<Value>(a->data * b->data,
+                                     std::vector<std::shared_ptr<Value>>{a, b});
+  Value *out_raw = out.get();
+  out->_backward = [a, b, out_raw]() {
+    a->grad += (b->data) * out_raw->grad;
+    b->grad += (a->data) * out_raw->grad;
+  };
+
+  return out;
 }
