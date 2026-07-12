@@ -16,3 +16,13 @@ typedef float f32;
 typedef double f64;
 
 using Scalar = f64;
+
+struct Value {
+  Scalar data;
+
+  Value(Scalar num) { data = num; }
+
+  Value operator+(const Value &other) { return Value(data + other.data); }
+
+  Value operator*(const Value &other) { return Value(data * other.data); }
+};
