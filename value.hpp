@@ -93,3 +93,16 @@ std::shared_ptr<Value> tanh_(std::shared_ptr<Value> x) {
 
   return out;
 }
+
+std::shared_ptr<Value> sub(std::shared_ptr<Value> a, std::shared_ptr<Value> b) {
+  auto out = std::make_shared<Value>(a->data - b->data,
+                                     std::vector<std::shared_ptr<Value>>{a, b});
+
+  Value *out_raw = out.get();
+  out->_backward = [a, b, out_raw]() {
+    a->grad += 1 * out_raw->grad;
+    b->grad += -1 * out_raw->grad;
+  };
+
+  return out;
+}

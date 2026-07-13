@@ -1,6 +1,7 @@
 #include "nn.hpp"
 #include <iostream>
 #include <memory>
+#include <vector>
 
 int main() {
   /*
@@ -136,17 +137,106 @@ int main() {
 
  */
 
-  Neuron n(3);
-  std::cout << "neuron params = " << n.parameters().size()
-            << "  (expect 4)\n"; // 3 w + 1 b
+  /*
+    Neuron n(3);
+    std::cout << "neuron params = " << n.parameters().size()
+              << "  (expect 4)\n"; // 3 w + 1 b
 
-  Layer layer(2, 3);
-  std::cout << "layer params = " << layer.parameters().size()
-            << "  (expect 9)\n"; // 3 neurons * (2 w + 1 b) = 9
+    Layer layer(2, 3);
+    std::cout << "layer params = " << layer.parameters().size()
+              << "  (expect 9)\n"; // 3 neurons * (2 w + 1 b) = 9
+
+    MLP net(3, {4, 4, 1});
+    std::cout << "mlp params = " << net.parameters().size()
+              << "  (expect anything)\n";
+  */
+
+  /*
+  auto p = std::make_shared<Value>(5.0);
+  auto q = std::make_shared<Value>(3.0);
+  auto r = sub(p, q);
+
+  r->grad = 1.0;
+  r->_backward();
+
+  std::cout << r->data << " " << p->grad << " " << q->grad << "\n";
+    */
+
+  /*
+  std::vector<std::vector<Scalar>> xs = {
+      {2.0, 3.0, -1.0}, {3.0, -1.0, 0.5}, {0.5, 1.0, 1.0}, {1.0, 1.0, -1.0}};
+  std::vector<Scalar> ys = {1.0, -1.0, -1.0, 1.0};
 
   MLP net(3, {4, 4, 1});
-  std::cout << "mlp params = " << net.parameters().size()
-            << "  (expect anything)\n";
+
+  std::shared_ptr<Value> loss = std::make_shared<Value>(0.0);
+
+  for (u32 i = 0; i < xs.size(); ++i) {
+    std::vector<std::shared_ptr<Value>> input;
+
+    for (Scalar val : xs[i]) {
+      input.push_back(std::make_shared<Value>(val));
+    }
+
+    auto out = net.forward(input);
+    auto pred = out[0];
+
+    auto target = std::make_shared<Value>(ys[i]);
+
+    auto diff = sub(pred, target);
+    auto sq = mul(diff, diff);
+
+    loss = add(loss, sq);
+  }
+
+  std::cout << "loss = " << loss->data << '\n';
+
+  for (auto &p : net.parameters())
+    p->grad = 0;
+  loss->backward();
+
+  auto params = net.parameters();
+  std::cout << "param[0] grad = " << params[0]->grad << "  (nonzero)\n";
+
+  */
+
+  std::vector<std::vector<Scalar>> xs = {
+      {2.0, 3.0, -1.0}, {3.0, -1.0, 0.5}, {0.5, 1.0, 1.0}, {1.0, 1.0, -1.0}};
+  std::vector<Scalar> ys = {1.0, -1.0, -1.0, 1.0};
+
+  MLP net(3, {4, 4, 1});
+
+  for (int step = 0; step < 100; ++step) {
+    std::shared_ptr<Value> loss = std::make_shared<Value>(0.0);
+
+    for (u32 i = 0; i < xs.size(); ++i) {
+      std::vector<std::shared_ptr<Value>> input;
+
+      for (Scalar val : xs[i]) {
+        input.push_back(std::make_shared<Value>(val));
+      }
+
+      auto out = net.forward(input);
+      auto pred = out[0];
+
+      auto target = std::make_shared<Value>(ys[i]);
+
+      auto diff = sub(pred, target);
+      auto sq = mul(diff, diff);
+
+      loss = add(loss, sq);
+    }
+
+    for (auto &p : net.parameters())
+      p->grad = 0;
+    loss->backward();
+
+    for (auto &p : net.parameters()) {
+      p->data += -0.05 * p->grad;
+    }
+
+    std::cout << "step " << step << " loss " << loss->data << "\n";
+  }
 
   return 0;
 }
