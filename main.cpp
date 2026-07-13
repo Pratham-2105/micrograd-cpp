@@ -51,6 +51,7 @@ int main() {
   std::cout << "y->grad = " << y->grad << "  (expect 1)\n";
   */
 
+  /*
   auto a = std::make_shared<Value>(2.0);
   auto b = std::make_shared<Value>(3.0);
   auto c = std::make_shared<Value>(10.0);
@@ -70,6 +71,15 @@ int main() {
   y->backward();
 
   std::cout << "x->grad = " << x->grad << "  (expect 2)\n";
+
+  */
+
+  auto z = std::make_shared<Value>(0.0);
+  auto t = tanh_(z);
+
+  std::cout << "t->data = " << t->data << "  (expect 0)\n";
+  t->backward();
+  std::cout << "z->grad = " << z->grad << "  (expect 1)\n";
 
   return 0;
 }

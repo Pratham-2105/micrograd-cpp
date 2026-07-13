@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cmath>
 #include <cstdint>
 #include <functional>
 #include <memory>
@@ -49,9 +50,8 @@ struct Value {
     build_topo(topo, visited);
 
     this->grad = 1.0;
-    for (i64 it = topo.size() - 1; it >= 0; --it) {
-      auto child = topo[it];
-      child->_backward();
+    for (auto it = topo.rbegin(); it != topo.rend(); ++it) {
+      (*it)->_backward();
     }
   }
 };
@@ -77,6 +77,18 @@ std::shared_ptr<Value> mul(std::shared_ptr<Value> a, std::shared_ptr<Value> b) {
   out->_backward = [a, b, out_raw]() {
     a->grad += (b->data) * out_raw->grad;
     b->grad += (a->data) * out_raw->grad;
+  };
+
+  return out;
+}
+
+std::shared_ptr<Value> tanh_(std::shared_ptr<Value> x) {
+  auto out = std::make_shared<Value>(std::tanh(x->data),
+                                     std::vector<std::shared_ptr<Value>>{x});
+
+  Value *out_raw = out.get();
+  out->_backward = [x, out_raw]() {
+    x->grad += (1 - out_raw->data * out_raw->data) * out_raw->grad;
   };
 
   return out;
