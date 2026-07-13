@@ -2,14 +2,19 @@ CXX      := g++
 CXXFLAGS := -std=c++17 -Wall -Wextra -Wpedantic -g
 TARGET   := micrograd
 SRCS     := main.cpp
+HEADERS  := value.hpp nn.hpp
 
-$(TARGET): $(SRCS) value.hpp
+$(TARGET): $(SRCS) $(HEADERS)
 	$(CXX) $(CXXFLAGS) -o $(TARGET) $(SRCS)
 
 run: $(TARGET)
 	./$(TARGET)
 
-clean:
-	rm -f $(TARGET)
+test: test.cpp $(HEADERS)
+	$(CXX) $(CXXFLAGS) -o test test.cpp
+	./test
 
-.PHONY: run clean
+clean:
+	rm -f $(TARGET) test
+
+.PHONY: run test clean
