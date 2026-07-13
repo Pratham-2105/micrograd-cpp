@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <functional>
 #include <memory>
+#include <set>
 #include <vector>
 
 typedef int8_t i8;
@@ -29,6 +30,30 @@ struct Value {
 
   Value(Scalar num, std::vector<std::shared_ptr<Value>> child)
       : data(num), children(child) {}
+
+  void build_topo(std::vector<Value *> &topo, std::set<Value *> &visited) {
+    if (visited.count(this))
+      return;
+    visited.insert(this);
+
+    for (auto &child : children) {
+      child->build_topo(topo, visited);
+    }
+
+    topo.push_back(this);
+  }
+
+  void backward() {
+    std::vector<Value *> topo;
+    std::set<Value *> visited;
+    build_topo(topo, visited);
+
+    this->grad = 1.0;
+    for (i64 it = topo.size() - 1; it >= 0; --it) {
+      auto child = topo[it];
+      child->_backward();
+    }
+  }
 };
 
 std::shared_ptr<Value> add(std::shared_ptr<Value> a, std::shared_ptr<Value> b) {

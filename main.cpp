@@ -28,6 +28,7 @@ int main() {
             << "  (expect true)\n";
 
   */
+  /*
 
   auto a = std::make_shared<Value>(2.0);
   auto b = std::make_shared<Value>(3.0);
@@ -48,6 +49,20 @@ int main() {
 
   std::cout << "x->grad = " << x->grad << "  (expect 1)\n";
   std::cout << "y->grad = " << y->grad << "  (expect 1)\n";
+  */
+
+  auto a = std::make_shared<Value>(2.0);
+  auto b = std::make_shared<Value>(3.0);
+  auto c = std::make_shared<Value>(10.0);
+  auto e = mul(a, b); // 6
+  auto L = add(e, c); // 16
+
+  L->backward();
+
+  std::cout << "L->data = " << L->data << "  (expect 16)\n";
+  std::cout << "c->grad = " << c->grad << "  (expect 1)\n";
+  std::cout << "a->grad = " << a->grad << "  (expect 3)\n";
+  std::cout << "b->grad = " << b->grad << "  (expect 2)\n";
 
   return 0;
 }
