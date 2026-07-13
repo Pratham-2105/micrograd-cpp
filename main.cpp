@@ -105,6 +105,7 @@ int main() {
   std::cout << "b->grad    = " << n.b->grad << "  (expect 1... ish)\n";
   */
 
+  /*
   Layer layer(2, 3);
   std::vector<std::shared_ptr<Value>> x = {std::make_shared<Value>(0.5),
                                            std::make_shared<Value>(-0.5)};
@@ -115,5 +116,21 @@ int main() {
   for (auto &o : outs)
     std::cout << o->data << " ";
   std::cout << "\n";
+  */
+
+  MLP net(3, {4, 4, 1});
+  std::vector<std::shared_ptr<Value>> x = {std::make_shared<Value>(1.0),
+                                           std::make_shared<Value>(-2.0),
+                                           std::make_shared<Value>(0.5)};
+
+  auto out = net.forward(x);
+
+  std::cout << "out.size() = " << out.size() << "  (expect 1)\n";
+  std::cout << "out[0]->data = " << out[0]->data << "  (in (-1,1))\n";
+
+  out[0]->backward();
+
+  std::cout << "net.layers[0].neurons[0].w[0]->grad = "
+            << net.layers[0].neurons[0].w[0]->grad << "  (nonzero)\n";
   return 0;
 }

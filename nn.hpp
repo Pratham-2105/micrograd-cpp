@@ -52,3 +52,29 @@ struct Layer {
     return outs;
   }
 };
+
+struct MLP {
+  std::vector<Layer> layers;
+
+  MLP(i32 nin, std::vector<i32> nouts) {
+    std::vector<i32> sizes;
+    sizes.push_back(nin);
+
+    for (i32 n : nouts)
+      sizes.push_back(n);
+
+    for (u32 i = 0; i < nouts.size(); ++i) {
+      layers.push_back(Layer(sizes[i], sizes[i + 1]));
+    }
+  }
+
+  std::vector<std::shared_ptr<Value>>
+  forward(std::vector<std::shared_ptr<Value>> x) {
+
+    for (Layer layer : layers) {
+      x = layer.forward(x);
+    }
+
+    return x;
+  }
+};
