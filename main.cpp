@@ -91,6 +91,7 @@ int main() {
   std::cout << "w[0]->data = " << n.w[0]->data << "  (in [-1,1])\n";
  */
 
+  /*
   Neuron n(2);
   std::vector<std::shared_ptr<Value>> x = {std::make_shared<Value>(1.0),
                                            std::make_shared<Value>(-1.0)};
@@ -102,6 +103,17 @@ int main() {
 
   std::cout << "w[0]->grad = " << n.w[0]->grad << "  (nonzero)\n";
   std::cout << "b->grad    = " << n.b->grad << "  (expect 1... ish)\n";
+  */
 
+  Layer layer(2, 3);
+  std::vector<std::shared_ptr<Value>> x = {std::make_shared<Value>(0.5),
+                                           std::make_shared<Value>(-0.5)};
+
+  auto outs = layer.forward(x);
+  std::cout << "outs.size() = " << outs.size() << "  (expect 3)\n";
+
+  for (auto &o : outs)
+    std::cout << o->data << " ";
+  std::cout << "\n";
   return 0;
 }

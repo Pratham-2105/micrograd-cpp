@@ -31,3 +31,24 @@ struct Neuron {
     return tanh_(acc);
   }
 };
+
+struct Layer {
+  std::vector<Neuron> neurons;
+
+  Layer(i32 nin, i32 nout) {
+    for (i32 i = 0; i < nout; ++i) {
+      neurons.push_back(Neuron(nin));
+    }
+  }
+
+  std::vector<std::shared_ptr<Value>>
+  forward(std::vector<std::shared_ptr<Value>> x) {
+    std::vector<std::shared_ptr<Value>> outs;
+
+    for (Neuron &neuron : neurons) {
+      outs.push_back(neuron.forward(x));
+    }
+
+    return outs;
+  }
+};
