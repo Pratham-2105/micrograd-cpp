@@ -30,6 +30,17 @@ struct Neuron {
 
     return tanh_(acc);
   }
+
+  std::vector<std::shared_ptr<Value>> parameters() {
+    std::vector<std::shared_ptr<Value>> params;
+
+    for (std::shared_ptr<Value> &weight : w) {
+      params.push_back(weight);
+    }
+    params.push_back(b);
+
+    return params;
+  }
 };
 
 struct Layer {
@@ -50,6 +61,17 @@ struct Layer {
     }
 
     return outs;
+  }
+
+  std::vector<std::shared_ptr<Value>> parameters() {
+    std::vector<std::shared_ptr<Value>> params;
+
+    for (auto &n : neurons) {
+      auto np = n.parameters();
+      params.insert(params.end(), np.begin(), np.end());
+    }
+
+    return params;
   }
 };
 
@@ -76,5 +98,16 @@ struct MLP {
     }
 
     return x;
+  }
+
+  std::vector<std::shared_ptr<Value>> parameters() {
+    std::vector<std::shared_ptr<Value>> params;
+
+    for (auto &l : layers) {
+      auto lp = l.parameters();
+      params.insert(params.end(), lp.begin(), lp.end());
+    }
+
+    return params;
   }
 };

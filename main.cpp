@@ -118,6 +118,7 @@ int main() {
   std::cout << "\n";
   */
 
+  /*
   MLP net(3, {4, 4, 1});
   std::vector<std::shared_ptr<Value>> x = {std::make_shared<Value>(1.0),
                                            std::make_shared<Value>(-2.0),
@@ -132,5 +133,20 @@ int main() {
 
   std::cout << "net.layers[0].neurons[0].w[0]->grad = "
             << net.layers[0].neurons[0].w[0]->grad << "  (nonzero)\n";
+
+ */
+
+  Neuron n(3);
+  std::cout << "neuron params = " << n.parameters().size()
+            << "  (expect 4)\n"; // 3 w + 1 b
+
+  Layer layer(2, 3);
+  std::cout << "layer params = " << layer.parameters().size()
+            << "  (expect 9)\n"; // 3 neurons * (2 w + 1 b) = 9
+
+  MLP net(3, {4, 4, 1});
+  std::cout << "mlp params = " << net.parameters().size()
+            << "  (expect anything)\n";
+
   return 0;
 }
