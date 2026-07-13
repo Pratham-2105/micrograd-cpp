@@ -64,5 +64,12 @@ int main() {
   std::cout << "a->grad = " << a->grad << "  (expect 3)\n";
   std::cout << "b->grad = " << b->grad << "  (expect 2)\n";
 
+  auto x = std::make_shared<Value>(3.0);
+  auto y = add(x, x);
+
+  y->backward();
+
+  std::cout << "x->grad = " << x->grad << "  (expect 2)\n";
+
   return 0;
 }
