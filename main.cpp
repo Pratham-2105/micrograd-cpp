@@ -1,4 +1,4 @@
-#include "value.hpp"
+#include "nn.hpp"
 #include <iostream>
 #include <memory>
 
@@ -74,12 +74,34 @@ int main() {
 
   */
 
+  /*
   auto z = std::make_shared<Value>(0.0);
   auto t = tanh_(z);
 
   std::cout << "t->data = " << t->data << "  (expect 0)\n";
   t->backward();
   std::cout << "z->grad = " << z->grad << "  (expect 1)\n";
+
+  */
+
+  /*
+  Neuron n(3);
+  std::cout << "w.size() = " << n.w.size() << "  (expect 3)\n";
+  std::cout << "b->data  = " << n.b->data << "  (in [-1,1])\n";
+  std::cout << "w[0]->data = " << n.w[0]->data << "  (in [-1,1])\n";
+ */
+
+  Neuron n(2);
+  std::vector<std::shared_ptr<Value>> x = {std::make_shared<Value>(1.0),
+                                           std::make_shared<Value>(-1.0)};
+
+  auto out = n.forward(x);
+  std::cout << "out->data = " << out->data << "  (in (-1,1))\n";
+
+  out->backward();
+
+  std::cout << "w[0]->grad = " << n.w[0]->grad << "  (nonzero)\n";
+  std::cout << "b->grad    = " << n.b->grad << "  (expect 1... ish)\n";
 
   return 0;
 }
