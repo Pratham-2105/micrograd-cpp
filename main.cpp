@@ -1,4 +1,5 @@
 #include "nn.hpp"
+#include <fstream>
 #include <iostream>
 #include <memory>
 #include <vector>
@@ -10,6 +11,7 @@ int main() {
 
   MLP net(3, {4, 4, 1});
 
+  std::ofstream lossfile("losses.txt");
   for (int step = 0; step < 100; ++step) {
     std::shared_ptr<Value> loss = std::make_shared<Value>(0.0);
 
@@ -34,6 +36,8 @@ int main() {
       p->data += -0.05 * p->grad;
 
     std::cout << "step " << step << " loss " << loss->data << "\n";
+    lossfile << step << " " << loss->data << "\n";
   }
+
   return 0;
 }
