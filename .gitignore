@@ -4,6 +4,7 @@ micrograd
 *.out
 *.exe
 *.dSYM/
+losses.txt
 # Editor / OS
 .vscode/
 *.swp
