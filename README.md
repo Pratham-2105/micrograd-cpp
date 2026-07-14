@@ -92,12 +92,6 @@ turn into something that fits the data.
 
 ## Notes
 
-I built this one piece at a time, testing each part on small values I could check by hand
-before moving on — the killer check is running `backward()` on a small expression and verifying
-every gradient against a paper chain-rule computation. The rule throughout was to look up how a
-mechanism works when I got stuck, but never to copy a finished solution; the point was to end
-up understanding every line.
-
 The design follows Andrej Karpathy's micrograd (from his *Neural Networks: Zero to Hero*
 series), rebuilt in C++ from scratch. Where CNeural hand-coded backpropagation for a fixed
 network, this automates it for any expression — the same progression the field itself took.
